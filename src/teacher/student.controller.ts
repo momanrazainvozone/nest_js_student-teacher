@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 
 @Controller('teachers/:teacher_id/students')
 export class teacherStudentController {
@@ -10,8 +10,9 @@ export class teacherStudentController {
   @Put('/:student_id')
   updateTeacherStudent(
     @Param() Param: { teacher_id: string; student_id: string },
+    @Body() Body,
   ) {
-    console.log(Param, 'param');
+    console.log(Param, 'param and Body is:', Body);
     return 'Update teacher student';
   }
 }
