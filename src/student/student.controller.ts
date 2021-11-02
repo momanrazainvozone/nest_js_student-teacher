@@ -1,42 +1,45 @@
-import { Controller, Get, Post, Put, Param, Body } from '@nestjs/common';
-import { StudentService } from './student.service';
 import {
-  studentCreateDto,
-  studentResponseDto,
-  studentUpdateDto,
-  studentGetDto,
-} from './student_dto/student.dto';
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
+import {
+  FindStudentsResponseDto,
+  CreateStudentDto,
+  StudentResponseDto,
+  UpdateStudentDto,
+} from './dto/student.dto';
+import { StudentService } from './student.service';
+import { Students } from './entity/student.entity';
 
 @Controller('students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get()
-  // defing the data tyoe what we will return
-  getStudents(): studentResponseDto[] {
+  getStudent() {
     return this.studentService.getStudents();
   }
 
-  @Get('/:student_id')
-  // direct get id in var
-  getStudentById(@Param('student_id') student_id: string): studentGetDto {
-    console.log(student_id, 'param');
-    return this.studentService.getStudentById();
+  @Get('/:studentId')
+  getStudentById(@Param('studentId') studentId: string): Promise<Students> {
+    return this.studentService.getStudentById(studentId);
   }
 
   @Post()
-  createStudent(@Body() Body: studentCreateDto): studentGetDto {
-    console.log(Body, 'BODY');
-    return this.studentService.createStudent();
+  createStudent(@Body() body: CreateStudentDto): Promise<Students> {
+    return this.studentService.createStudent(body);
   }
 
-  // get id in object
-  @Put('/:student_id')
-  updateStudentById(
-    @Param() param: { student_id: string },
-    @Body() Body: studentUpdateDto,
-  ): studentGetDto {
-    console.log('student_id is:', param, 'And the body is', Body);
-    return this.studentService.updateStudentById();
+  @Put('/:studentId')
+  updateStudent(
+    @Param('studentId') studentId: string,
+    @Body() body: UpdateStudentDto,
+  ) {
+    return this.studentService.updateStudent(body, studentId);
   }
 }

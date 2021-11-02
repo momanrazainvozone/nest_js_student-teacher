@@ -1,25 +1,52 @@
-import { Injectable } from '@nestjs/common';
-
+import { Injectable, HttpException } from '@nestjs/common';
+import { students } from '../db';
+import {
+  CreateStudentDto,
+  FindStudentsResponseDto,
+  StudentResponseDto,
+  UpdateStudentDto,
+} from './dto/student.dto';
+import { v4 as uuid } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { StudentsRepository } from './repository/student.repository';
+import { Students } from './entity/student.entity';
 @Injectable()
 export class StudentService {
-  private students = [
-    {
-      name: 'Moman Raza',
-      address: 'Okara Pakistan',
-      bio: 'My name is Moman Raza and I am full stack Developer',
-      social_media: ['facebook', 'LinkedIn'],
-    },
-  ];
-  getStudents() {
-    return this.students;
+  constructor(
+    @InjectRepository(StudentsRepository)
+    private studentRepository: StudentsRepository,
+  ) {}
+  //private students = students;
+
+  async getStudents() {
+    return await this.studentRepository.find({});
   }
-  createStudent() {
-    return this.students[0];
+
+  async getStudentById(id: string): Promise<Students> {
+    return await this.studentRepository.findOne({ where: { id: id } });
   }
-  getStudentById() {
-    return this.students[0];
+
+  async createStudent(payload: CreateStudentDto): Promise<Students> {
+    const _newStudent = await this.studentRepository.save(payload);
+    return _newStudent;
   }
-  updateStudentById() {
-    return this.students[0];
+
+  async updateStudent(payload: UpdateStudentDto, id: string) {
+    let updatedStudent = await this.studentRepository.update(
+      { id },
+      { ...payload },
+    );
+    console.log(updatedStudent, 'updatedStudent');
+    return payload;
+  }
+
+  async getStudentsByTeacherId(teacherId: string) {
+    let student = await this.studentRepository.find({
+      where: { id: teacherId },
+    });
+    if (!student) {
+      throw new HttpException('Student not found', 400);
+    }
+    return student;
   }
 }

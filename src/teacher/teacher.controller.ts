@@ -1,35 +1,32 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import {
-  getTeacherStudentDto,
-  createTeacherStudentDto,
-  returnTeacherStudentDto,
-} from './teacerDto/teacher.dto';
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { CraeteTeacherResponseDto } from './dto/teacher.dto';
+import { Teachers } from './entity/teacher.entity';
+import { TeachersRepository } from './repository/teacher.repository';
 import { TeacherService } from './teacher.service';
-@Controller('teacher')
-export class teacherController {
+
+@Controller('teachers')
+export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
 
   @Get()
-  get() {
-    return 'All teachers';
+  getTeachers() {
+    return this.teacherService.getTeachers();
   }
-  @Get('/:teacher_id')
-  getTeacherById(@Param() param: { teacher_id: string }): getTeacherStudentDto {
-    console.log(param, 'param');
-    return this.teacherService.getTeacherById();
+
+  @Get('/:teacherId')
+  getTeacherById(@Param('teacherId') teacherId: string): Promise<Teachers[]> {
+    return this.teacherService.getTeacherById(teacherId);
   }
+
   @Post()
-  createTeacher(
-    @Body() Body: createTeacherStudentDto,
-  ): returnTeacherStudentDto {
-    console.log('Body is:', Body);
-    return this.teacherService.createTeacher();
-  }
-  @Put('/:teacher_id')
-  updateTeacherById(
-    @Param() Param: { teacher_id: string },
-  ): returnTeacherStudentDto {
-    console.log(Param, 'param');
-    return this.teacherService.updateTeacherStudent();
+  createTeacher(@Body() body: CraeteTeacherResponseDto): Promise<Teachers> {
+    return this.teacherService.createTeacher(body);
   }
 }

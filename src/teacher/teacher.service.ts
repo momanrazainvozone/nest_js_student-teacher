@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { teachers } from '../db';
+import { CraeteTeacherResponseDto } from './dto/teacher.dto';
+import { TeachersRepository } from './repository/teacher.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Teachers } from './entity/teacher.entity';
 
 @Injectable()
 export class TeacherService {
-  private teachers = [
-    {
-      id: '112233',
-      name: 'Moman Raza',
-      address: 'Okara Pakistan',
-      bio: 'My name is Moman Raza and I am full stack Developer',
-      social_media: ['facebook', 'LinkedIn'],
-    },
-  ];
-  getStudents() {
-    return this.teachers;
-  }
-  updateTeacherStudent() {
-    return this.teachers[0];
-  }
-  updateTeacherById() {
-    return this.teachers[0];
+  constructor(
+    @InjectRepository(TeachersRepository)
+    private teachersRepository: TeachersRepository,
+  ) {}
+
+  private teachers = teachers;
+
+  async getTeachers() {
+    return await this.teachersRepository.find();
   }
 
-  createTeacher() {
-    return this.teachers[0];
+  async getTeacherById(id: string): Promise<Teachers[]> {
+    return await this.teachersRepository.find({ where: { id: id } });
   }
-  getTeacherById() {
-    return this.teachers[0];
+
+  async createTeacher(payload: CraeteTeacherResponseDto): Promise<Teachers> {
+    const _teacher = await this.teachersRepository.save({ ...payload });
+    return _teacher;
   }
 }

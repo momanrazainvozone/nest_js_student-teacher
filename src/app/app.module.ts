@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { StudentController } from '../student/student.controller';
-import { teacherController } from '../teacher/teacher.controller';
-import { teacherStudentController } from '../teacher/student.controller';
-import { StudentService } from '../student/student.service';
-import { TeacherService } from '../teacher/teacher.service';
+import { StudentsModule } from '../student/student.module';
+import { TeacherModule } from '../teacher/teacher.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { config } from '../config/orm.config';
+
 @Module({
-  imports: [],
-  controllers: [StudentController, teacherController, teacherStudentController],
-  providers: [StudentService, TeacherService],
+  imports: [TypeOrmModule.forRoot(config), StudentsModule, TeacherModule],
 })
 export class AppModule {}
