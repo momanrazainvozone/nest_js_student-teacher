@@ -25,4 +25,10 @@ export class Students extends BaseEntity {
     type: 'varchar',
   })
   password: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  accessToken: string;
 }

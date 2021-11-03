@@ -10,12 +10,19 @@ import { ValidStudentMiddleware } from '../common/middlewares/validStudent.middl
 import { CreateStudentMiddleware } from '../common/middlewares/createStudent.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsRepository } from './repository/student.repository';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   controllers: [StudentController],
   providers: [StudentService],
   exports: [StudentService],
-  imports: [TypeOrmModule.forFeature([StudentsRepository])],
+  imports: [
+    TypeOrmModule.forFeature([StudentsRepository]),
+    JwtModule.register({
+      secret: 'abcssjsjsjaajdkj',
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],
 })
 export class StudentsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   CreateStudentDto,
+  CreateStudentResponseDto,
   FindStudentsResponseDto,
   loginStudentDto,
   StudentResponseDto,
@@ -14,13 +15,15 @@ import { v4 as uuid } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsRepository } from './repository/student.repository';
 import { Students } from './entity/student.entity';
-import { async } from 'rxjs';
+import { JwtService } from '@nestjs/jwt';
 const bcrypt = require('bcrypt');
+
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(StudentsRepository)
-    public studentRepository: StudentsRepository,
+    private studentRepository: StudentsRepository,
+    private jwtService: JwtService,
   ) {}
   //private students = students;
 
@@ -32,13 +35,24 @@ export class StudentService {
     return await this.studentRepository.findOne({ where: { id: id } });
   }
 
-  async createStudent(payload: CreateStudentDto): Promise<Students> {
+  async createStudent(
+    payload: CreateStudentDto,
+  ): Promise<CreateStudentResponseDto> {
     // hashing password
+    let access_token;
     let new_student = { ...payload };
     const hash = await bcrypt.hash(payload.password, 10);
     new_student.password = hash;
     const _newStudent = await this.studentRepository.save(new_student);
-    return _newStudent;
+    access_token = this.jwtService.sign({
+      ..._newStudent,
+      accessToken: access_token,
+    });
+    await this.studentRepository.update(
+      { email: payload.email },
+      { ..._newStudent, accessToken: access_token },
+    );
+    return { ..._newStudent, accessToken: access_token };
   }
 
   async updateStudent(payload: UpdateStudentDto, id: string) {

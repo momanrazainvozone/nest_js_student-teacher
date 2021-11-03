@@ -11,6 +11,14 @@ export class CreateStudentDto {
   password: string;
 }
 
+export class CreateStudentResponseDto {
+  name: string;
+  teacher: string;
+  email: string;
+  password: string;
+  accessToken: string;
+}
+
 export class StudentResponseDto {
   id: string;
   name: string;

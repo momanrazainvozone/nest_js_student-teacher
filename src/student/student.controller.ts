@@ -13,6 +13,7 @@ import {
   StudentResponseDto,
   UpdateStudentDto,
   loginStudentDto,
+  CreateStudentResponseDto,
 } from './dto/student.dto';
 import { StudentService } from './student.service';
 import { Students } from './entity/student.entity';
@@ -32,7 +33,9 @@ export class StudentController {
   }
 
   @Post()
-  createStudent(@Body() body: CreateStudentDto): Promise<Students> {
+  createStudent(
+    @Body() body: CreateStudentDto,
+  ): Promise<CreateStudentResponseDto> {
     return this.studentService.createStudent(body);
   }
 
