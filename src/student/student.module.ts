@@ -20,7 +20,7 @@ import { JwtStrategy } from './jwt.startegy';
   imports: [
     TypeOrmModule.forFeature([StudentsRepository]),
     JwtModule.register({
-      secret: 'abcssjsjsjaajdkj',
+      secret: process.env.JWT_SCERET,
       signOptions: { expiresIn: '24h' },
     }),
   ],
