@@ -14,4 +14,15 @@ export class Students extends BaseEntity {
     type: 'varchar',
   })
   teacher: string;
+
+  @Column({
+    type: 'varchar',
+    unique: true,
+  })
+  email: string;
+
+  @Column({
+    type: 'varchar',
+  })
+  password: string;
 }

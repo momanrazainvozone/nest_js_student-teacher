@@ -1,8 +1,12 @@
-import { Injectable, HttpException } from '@nestjs/common';
-import { students } from '../db';
+import {
+  Injectable,
+  HttpException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   CreateStudentDto,
   FindStudentsResponseDto,
+  loginStudentDto,
   StudentResponseDto,
   UpdateStudentDto,
 } from './dto/student.dto';
@@ -10,11 +14,13 @@ import { v4 as uuid } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StudentsRepository } from './repository/student.repository';
 import { Students } from './entity/student.entity';
+import { async } from 'rxjs';
+const bcrypt = require('bcrypt');
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(StudentsRepository)
-    private studentRepository: StudentsRepository,
+    public studentRepository: StudentsRepository,
   ) {}
   //private students = students;
 
@@ -27,7 +33,11 @@ export class StudentService {
   }
 
   async createStudent(payload: CreateStudentDto): Promise<Students> {
-    const _newStudent = await this.studentRepository.save(payload);
+    // hashing password
+    let new_student = { ...payload };
+    const hash = await bcrypt.hash(payload.password, 10);
+    new_student.password = hash;
+    const _newStudent = await this.studentRepository.save(new_student);
     return _newStudent;
   }
 
@@ -46,6 +56,22 @@ export class StudentService {
     });
     if (!student) {
       throw new HttpException('Student not found', 400);
+    }
+    return student;
+  }
+
+  //Login
+  async loginStudent(payload: loginStudentDto) {
+    const student = await this.studentRepository.findOne({
+      email: payload.email,
+    });
+    const isPasswordMatching = await bcrypt.compare(
+      payload.password,
+      student.password,
+    );
+
+    if (!isPasswordMatching) {
+      throw new UnauthorizedException();
     }
     return student;
   }

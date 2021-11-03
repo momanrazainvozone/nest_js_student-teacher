@@ -12,6 +12,7 @@ import {
   CreateStudentDto,
   StudentResponseDto,
   UpdateStudentDto,
+  loginStudentDto,
 } from './dto/student.dto';
 import { StudentService } from './student.service';
 import { Students } from './entity/student.entity';
@@ -41,5 +42,10 @@ export class StudentController {
     @Body() body: UpdateStudentDto,
   ) {
     return this.studentService.updateStudent(body, studentId);
+  }
+
+  @Post('/loginStudent')
+  loginStudent(@Body() body: loginStudentDto) {
+    return this.studentService.loginStudent(body);
   }
 }
