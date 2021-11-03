@@ -8,6 +8,7 @@ import {
   CreateStudentResponseDto,
   FindStudentsResponseDto,
   loginStudentDto,
+  logoutStudentDto,
   StudentResponseDto,
   UpdateStudentDto,
 } from './dto/student.dto';
@@ -44,15 +45,15 @@ export class StudentService {
     const hash = await bcrypt.hash(payload.password, 10);
     new_student.password = hash;
     const _newStudent = await this.studentRepository.save(new_student);
+    //Generating access token
     access_token = this.jwtService.sign({
       ..._newStudent,
-      accessToken: access_token,
     });
     await this.studentRepository.update(
       { email: payload.email },
       { ..._newStudent, accessToken: access_token },
     );
-    return { ..._newStudent, accessToken: access_token };
+    return { ..._newStudent, accessToken: 'JWT ' + access_token };
   }
 
   async updateStudent(payload: UpdateStudentDto, id: string) {
@@ -60,7 +61,6 @@ export class StudentService {
       { id },
       { ...payload },
     );
-    console.log(updatedStudent, 'updatedStudent');
     return payload;
   }
 
@@ -88,5 +88,16 @@ export class StudentService {
       throw new UnauthorizedException();
     }
     return student;
+  }
+
+  //logout
+  async logoutStudent(payload: logoutStudentDto) {
+    console.log(payload, 'payload in logut');
+    return 'logout';
+  }
+
+  //validate
+  validateUser(payload) {
+    return { username: 'rosa' };
   }
 }

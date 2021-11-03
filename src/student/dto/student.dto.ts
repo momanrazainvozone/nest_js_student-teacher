@@ -36,3 +36,7 @@ export class loginStudentDto {
   email: string;
   password: string;
 }
+
+export class logoutStudentDto {
+  access_token: string;
+}

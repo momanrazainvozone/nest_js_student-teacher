@@ -11,16 +11,17 @@ import { CreateStudentMiddleware } from '../common/middlewares/createStudent.mid
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsRepository } from './repository/student.repository';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.startegy';
 
 @Module({
   controllers: [StudentController],
-  providers: [StudentService],
+  providers: [StudentService, JwtStrategy],
   exports: [StudentService],
   imports: [
     TypeOrmModule.forFeature([StudentsRepository]),
     JwtModule.register({
       secret: 'abcssjsjsjaajdkj',
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '24h' },
     }),
   ],
 })

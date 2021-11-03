@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   FindStudentsResponseDto,
@@ -14,9 +15,11 @@ import {
   UpdateStudentDto,
   loginStudentDto,
   CreateStudentResponseDto,
+  logoutStudentDto,
 } from './dto/student.dto';
 import { StudentService } from './student.service';
 import { Students } from './entity/student.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('students')
 export class StudentController {
@@ -50,5 +53,11 @@ export class StudentController {
   @Post('/loginStudent')
   loginStudent(@Body() body: loginStudentDto) {
     return this.studentService.loginStudent(body);
+  }
+
+  @Post('/logoutStudent')
+  @UseGuards(AuthGuard('jwt'))
+  logoutStudent(@Body() body: logoutStudentDto) {
+    return this.studentService.logoutStudent(body);
   }
 }
