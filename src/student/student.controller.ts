@@ -36,6 +36,7 @@ export class StudentController {
   }
 
   @Post()
+  //@UseGuards(AuthGuard('jwt'))
   createStudent(
     @Body() body: CreateStudentDto,
   ): Promise<CreateStudentResponseDto> {

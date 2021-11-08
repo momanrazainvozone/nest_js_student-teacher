@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Cron } from '@nestjs/schedule';
 import { config } from '../config/orm.config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 require('dotenv').config();
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot({ ignoreErrors: false }), // ignore if event have not listners
     TypeOrmModule.forRoot(config),
     ScheduleModule.forRoot(),
     StudentsModule,
@@ -16,8 +18,9 @@ require('dotenv').config();
   ],
 })
 export class AppModule {
+  // CRON JOB
   @Cron('* * * * * *')
   log() {
-    console.log('Every seconds');
+    console.log('CRON Working Every Seconds');
   }
 }
